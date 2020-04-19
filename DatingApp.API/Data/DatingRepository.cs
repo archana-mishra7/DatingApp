@@ -22,10 +22,31 @@ namespace DatingApp.API.Data
             _context.Remove(entity);
         }
 
+        public async Task<Photo> GetPhoto(int id)
+        {
+            var photo = await _context.Photos.IgnoreQueryFilters()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return photo;
+        }
+
         public async Task<User> GetUser(int id)
         {
             var user = await _context.Users.Include(p=>p.Photos).FirstOrDefaultAsync(u => u.Id==id);
             return user;            
+        }
+
+        public async Task<User> GetUser(int id, bool isCurrentUser)
+        {
+            //var query = _context.Users.AsQueryable();
+
+            // if (isCurrentUser)
+            //     query = query.IgnoreQueryFilters();
+
+            //var user = await query.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.Include(p=>p.Photos).FirstOrDefaultAsync(u => u.Id==id);
+
+            return user;
         }
 
         public async Task<IEnumerable<User>> GetUsers()
